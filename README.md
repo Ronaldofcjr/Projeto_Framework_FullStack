@@ -147,3 +147,4 @@ Um seller autenticado pode:
 ## 📌 Considerações Finais
 Este projeto fornece um sistema completo para mini mercados gerenciarem seus estoques e vendas com segurança e eficiência. 🚀
 
+# Projeto_Framework_FullStack
