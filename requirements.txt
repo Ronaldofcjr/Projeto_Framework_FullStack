@@ -1,5 +1,7 @@
-Flask==2.1.0
-flask_sqlalchemy
+Flask>=3.1          # use latest 3.x release to avoid pkgutil.get_loader issue
+Flask-SQLAlchemy>=3.1  # compatible with Flask 3 and SQLAlchemy 2
 mysql-connector-python
-werkzeug==2.0.2
-sqlalchemy==1.4.49
+# Werkzeug is pulled in as a dependency but pin a minimum version
+# high enough for Flask 3.1+ (3.1.6 in the environment currently).
+werkzeug>=3.1.6
+sqlalchemy>=2.0
