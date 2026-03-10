@@ -1,5 +1,7 @@
 from src.Application.Controllers.user_controller import UserController
-from flask import jsonify, make_response
+from src.Infrastructure.Model.user import User 
+from src.Application.Service.user_service import UserService
+from flask import jsonify, make_response, request
 
 def init_routes(app):    
     @app.route('/api', methods=['GET'])
@@ -11,6 +13,24 @@ def init_routes(app):
     @app.route('/user', methods=['POST'])
     def register_user():
         return UserController.register_user()
+    
+    @app.route('/user/verify', methods=['POST'])
+    def verify_token():
+        data = request.get_json()
+        celular = data.get('celular')
+        token = data.get('token')
+
+        user = User.query.filter_by(celular=celular, token=token).first()
+
+        if not user:
+            return make_response(jsonify({"erro": "Token inválido ou celular não encontrado"}), 400)
+
+        user.status = "ativo"
+        user.token = None
+
+        user.session.commit()
+
+        return {"message": "Usuário verificado com sucesso"}
     
     
 

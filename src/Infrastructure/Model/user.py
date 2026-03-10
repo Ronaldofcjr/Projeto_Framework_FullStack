@@ -8,6 +8,7 @@ class User(db.Model):
     cnpj = db.Column(db.String(20), unique=True, nullable=False)
     celular = db.Column(db.String(20), unique=True, nullable=False)
     status = db.Column(db.String(20), nullable=False)
+    token = db.Column(db.String(10))
 
     def to_dict(self):
         return {

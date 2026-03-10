@@ -11,6 +11,7 @@ class UserController:
         celular = data.get('celular')
         password = data.get('password')
         status = "inativo"
+
         
 
         if not name or not email or not password or not cnpj or not celular:
