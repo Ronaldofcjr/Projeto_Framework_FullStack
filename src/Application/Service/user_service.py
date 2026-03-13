@@ -22,3 +22,26 @@ class UserService:
         WhatsAppService.enviar_codigo(celular, gerar_token_usuario)  
         return UserDomain(user.id, user.name, user.email, user.password, user.cnpj, user.celular, user.status)
     
+
+    @staticmethod
+    def atualizar_usuario(data):
+
+        email = data.get('email')
+        name = data.get('name')
+        password = data.get('password')
+        cnpj = data.get('cnpj')
+        celular = data.get('celular')
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            return {"erro": "Email não encontrado"}, 400
+
+        user.name = name
+        user.password = password
+        user.cnpj = cnpj
+        user.celular = celular
+
+        db.session.commit()
+
+        return {"message": "Usuário atualizado com sucesso"}, 200
