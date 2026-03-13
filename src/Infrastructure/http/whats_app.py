@@ -7,8 +7,8 @@ class WhatsAppService:
     @staticmethod
     def enviar_codigo(numero, token):
         
-        account_sid = 'SEU_ACCOUNT_SID'
-        auth_token = 'SEU_AUTH_TOKEN'
+        account_sid = 'SUA_ACCOUNT_SID'
+        auth_token = 'SUA_AUTH_TOKEN'
 
         cliente = Client(account_sid, auth_token)
 

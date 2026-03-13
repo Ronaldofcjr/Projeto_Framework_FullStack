@@ -22,3 +22,14 @@ class UserController:
             "mensagem": "User salvo com sucesso",
             "usuarios": user.to_dict()
         }), 200)
+    
+    @staticmethod
+    def atualizar_usuario():
+
+        data = request.get_json()
+
+        response, status = UserService.atualizar_usuario(data)
+
+        return jsonify(response), status
+    
+    

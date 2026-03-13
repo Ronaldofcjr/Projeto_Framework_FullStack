@@ -33,5 +33,11 @@ def init_routes(app):
 
         return {"message": "Usuário verificado com sucesso"}
     
+    @app.route('/users/atualizar_usuario', methods=['PUT'])
+    def atualizar_usuario():
+        return UserController.atualizar_usuario()
+    
+
+    
     
 
