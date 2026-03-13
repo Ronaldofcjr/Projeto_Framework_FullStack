@@ -37,6 +37,10 @@ def init_routes(app):
     def atualizar_usuario():
         return UserController.atualizar_usuario()
     
+    @app.route("/users/<string:email>", methods=["DELETE"])
+    def delete_user_by_email_route(email):
+        return UserController.delete_user_by_email(email)
+    
 
     
     

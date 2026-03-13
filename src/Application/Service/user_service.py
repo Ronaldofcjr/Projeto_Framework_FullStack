@@ -45,3 +45,20 @@ class UserService:
         db.session.commit()
 
         return {"message": "Usuário atualizado com sucesso"}, 200
+    
+
+    @staticmethod
+    def delete_user_by_email(email):
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            raise Exception("Usuário não encontrado")
+
+        if user.status == "inativo":
+            raise Exception("Usuário já está inativo")
+
+        user.status = "inativo"
+        db.session.commit()
+
+        return True

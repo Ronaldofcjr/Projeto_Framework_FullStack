@@ -33,3 +33,10 @@ class UserController:
         return jsonify(response), status
     
     
+    @staticmethod
+    def delete_user_by_email(email):
+        try:
+            UserService.delete_user_by_email(email)
+            return {"message": f"Usuário {email} desativado com sucesso"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 400
