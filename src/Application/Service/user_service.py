@@ -62,3 +62,20 @@ class UserService:
         db.session.commit()
 
         return True
+    
+    @staticmethod
+    def verify_token(celular, token):
+        user = User.query.filter_by(celular=celular, token=token).first()
+        
+        if not user:
+            return {"erro": "Token inválido ou celular não encontrado"}, 400
+        
+        user.status = "ativo"
+        user.token = None
+        
+        db.session.commit()
+        
+        return {"message": "Usuário verificado com sucesso"}, 200
+    
+
+

@@ -40,3 +40,12 @@ class UserController:
             return {"message": f"Usuário {email} desativado com sucesso"}, 200
         except Exception as e:
             return {"error": str(e)}, 400
+        
+    @staticmethod
+    def verify_token():
+        data = request.get_json()
+        celular = data.get('celular')
+        token = data.get('token') 
+
+        result, status_code = UserService.verify_token(celular, token)
+        return jsonify(result), status_code
