@@ -41,7 +41,6 @@ def init_routes(app):
     def delete_user_by_email_route(email):
         return UserController.delete_user_by_email(email)
     
-
-    
-    
-
+    @app.route("/login", methods=["POST"])
+    def login():
+        return UserController.login()

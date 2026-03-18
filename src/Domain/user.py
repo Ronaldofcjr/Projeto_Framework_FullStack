@@ -14,6 +14,5 @@ class UserDomain:
             "email": self.email,
             "cnpj": self.cnpj,
             "celular": self.celular,
-            "status": self.status            
-            
+            "status": self.status
         }

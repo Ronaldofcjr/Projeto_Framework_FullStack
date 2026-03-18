@@ -12,8 +12,6 @@ class UserController:
         password = data.get('password')
         status = "inativo"
 
-        
-
         if not name or not email or not password or not cnpj or not celular:
             return make_response(jsonify({"erro": "Missing required fields"}), 400)
 
@@ -25,7 +23,6 @@ class UserController:
     
     @staticmethod
     def atualizar_usuario():
-
         data = request.get_json()
 
         response, status = UserService.atualizar_usuario(data)
@@ -49,3 +46,14 @@ class UserController:
 
         result, status_code = UserService.verify_token(celular, token)
         return jsonify(result), status_code
+    
+    @staticmethod
+    def login():
+        data = request.json
+
+        result = UserService.login_user(data["email"], data["senha"])
+
+        if "erro" in result:
+            return jsonify(result), result["status"]  
+        
+        return jsonify(result), 200

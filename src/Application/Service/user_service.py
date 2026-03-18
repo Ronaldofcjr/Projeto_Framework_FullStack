@@ -2,8 +2,15 @@ from src.Domain.user import UserDomain
 from src.Infrastructure.Model.user import User
 from src.config.data_base import db 
 import random
+import jwt
+from datetime import datetime, timedelta, timezone
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 class UserService:
+    SECRET_KEY = os.getenv("SECRET_KEY")
 
     @staticmethod
     def gerar_token():
@@ -25,7 +32,6 @@ class UserService:
 
     @staticmethod
     def atualizar_usuario(data):
-
         email = data.get('email')
         name = data.get('name')
         password = data.get('password')
@@ -49,7 +55,6 @@ class UserService:
 
     @staticmethod
     def delete_user_by_email(email):
-
         user = User.query.filter_by(email=email).first()
 
         if not user:
@@ -78,4 +83,26 @@ class UserService:
         return {"message": "Usuário verificado com sucesso"}, 200
     
 
+    @staticmethod
+    def login_user(email, senha):
+        user = User.query.filter_by(email=email).first()
 
+        if not user:
+            return {"erro": "Usuário não encontrado", "status": 404}
+        
+        if user.senha != senha:
+            return {"erro": "Senha inválida", "status": 401}
+        
+        if user.status != 'ativo':
+            return {"erro": "Conta não ativada", "status": 403}
+        
+        token = jwt.encode({
+            "id": user.id,
+            "exp": datetime.now(timezone.utc) + timedelta(hours=2)},
+            UserService.SECRET_KEY,
+            algorithm="HS256")
+
+        return {
+            "message": "Login realizado com sucesso",
+            "token": token
+        }
