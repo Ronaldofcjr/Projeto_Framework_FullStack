@@ -84,13 +84,13 @@ class UserService:
     
 
     @staticmethod
-    def login_user(email, senha):
+    def login_user(email, password):
         user = User.query.filter_by(email=email).first()
 
         if not user:
             return {"erro": "Usuário não encontrado", "status": 404}
         
-        if user.senha != senha:
+        if user.password != password:
             return {"erro": "Senha inválida", "status": 401}
         
         if user.status != 'ativo':
@@ -98,9 +98,11 @@ class UserService:
         
         token = jwt.encode({
             "id": user.id,
-            "exp": datetime.now(timezone.utc) + timedelta(hours=2)},
-            UserService.SECRET_KEY,
-            algorithm="HS256")
+            "exp": datetime.now(timezone.utc) + timedelta(hours=2)
+            }, UserService.SECRET_KEY, algorithm="HS256")
+        
+        if isinstance(token, bytes):
+            token = token.decode("utf-8")
 
         return {
             "message": "Login realizado com sucesso",

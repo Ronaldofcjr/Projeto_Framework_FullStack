@@ -51,9 +51,13 @@ class UserController:
     def login():
         data = request.json
 
-        result = UserService.login_user(data["email"], data["senha"])
+        email = data.get('email')
+        password = data.get('password')
 
-        if "erro" in result:
-            return jsonify(result), result["status"]  
-        
-        return jsonify(result), 200
+        if not email or not password:
+            return {"erro": "E-mail e senha são obrigatórios"}, 400
+
+        result = UserService.login_user(email, password)
+
+        status = result.pop("status", 200)
+        return jsonify(result), status
