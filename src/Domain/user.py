@@ -1,5 +1,5 @@
 class UserDomain:
-    def __init__(self, id, name, email, password, cnpj, celular, status):
+    def __init__(self, id, name, email, cnpj, celular, status):
         self.id = id
         self.name = name
         self.email = email

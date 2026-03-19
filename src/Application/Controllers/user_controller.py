@@ -21,7 +21,7 @@ class UserController:
         return make_response(jsonify({
             "mensagem": "User salvo com sucesso",
             "usuarios": user.to_dict()
-        }), 200)
+        }), 201)
     
     @staticmethod
     def update_user():

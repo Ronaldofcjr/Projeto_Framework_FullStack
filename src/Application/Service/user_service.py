@@ -3,6 +3,7 @@ from src.Infrastructure.Model.user import User
 from src.config.data_base import db 
 import random
 from flask_jwt_extended import create_access_token
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class UserService:
 
@@ -13,9 +14,10 @@ class UserService:
 
     @staticmethod
     def create_user(name, email, password, cnpj, celular, status):
+        hashed_password = generate_password_hash(password)
         from src.Infrastructure.http.whats_app import WhatsAppService
         gerar_token_usuario = UserService.gerar_token()    
-        user = User(name=name, email=email, password=password, cnpj=cnpj, celular=celular, status=status, token = gerar_token_usuario)        
+        user = User(name=name, email=email, password=hashed_password, cnpj=cnpj, celular=celular, status=status, token = gerar_token_usuario)        
         db.session.add(user)
         db.session.commit() 
 
@@ -38,7 +40,7 @@ class UserService:
             user.name = name
 
         if password:
-            user.password = password
+            user.password = generate_password_hash(password)
 
         if cnpj:
             user.cnpj = cnpj
@@ -86,7 +88,7 @@ class UserService:
         if not user:
             return {"erro": "Usuário não encontrado"}, 404
         
-        if user.password != password:
+        if not check_password_hash(user.password, password):
             return {"erro": "Senha inválida"}, 401
         
         if user.status != 'ativo':
