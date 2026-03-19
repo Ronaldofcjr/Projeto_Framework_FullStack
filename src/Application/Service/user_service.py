@@ -2,21 +2,14 @@ from src.Domain.user import UserDomain
 from src.Infrastructure.Model.user import User
 from src.config.data_base import db 
 import random
-import jwt
-from datetime import datetime, timedelta, timezone
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
+from flask_jwt_extended import create_access_token
 
 class UserService:
-    SECRET_KEY = os.getenv("SECRET_KEY")
 
     @staticmethod
     def gerar_token():
         token = random.randint(1000, 9999)
         return token
-
 
     @staticmethod
     def create_user(name, email, password, cnpj, celular, status):
@@ -29,44 +22,48 @@ class UserService:
         WhatsAppService.enviar_codigo(celular, gerar_token_usuario)  
         return UserDomain(user.id, user.name, user.email, user.password, user.cnpj, user.celular, user.status)
     
-
     @staticmethod
-    def atualizar_usuario(data):
-        email = data.get('email')
+    def update_user(data, user_id):
         name = data.get('name')
         password = data.get('password')
         cnpj = data.get('cnpj')
         celular = data.get('celular')
 
-        user = User.query.filter_by(email=email).first()
+        user = User.query.get(user_id)
 
         if not user:
-            return {"erro": "Email não encontrado"}, 400
+            return {"erro": "Usuário não encontrado"}, 404
+        
+        if name:
+            user.name = name
 
-        user.name = name
-        user.password = password
-        user.cnpj = cnpj
-        user.celular = celular
+        if password:
+            user.password = password
+
+        if cnpj:
+            user.cnpj = cnpj
+
+        if celular:
+            user.celular = celular
 
         db.session.commit()
 
         return {"message": "Usuário atualizado com sucesso"}, 200
     
-
     @staticmethod
-    def delete_user_by_email(email):
-        user = User.query.filter_by(email=email).first()
+    def delete_user(user_id):
+        user = User.query.get(user_id)
 
         if not user:
-            raise Exception("Usuário não encontrado")
+            return {"erro": "Usuário não encontrado"}, 404
 
         if user.status == "inativo":
-            raise Exception("Usuário já está inativo")
+            return {"erro": "Usuário já está inativo"}, 400
 
         user.status = "inativo"
         db.session.commit()
 
-        return True
+        return {"message": "Usuário desativado com sucesso"}, 200
     
     @staticmethod
     def verify_token(celular, token):
@@ -81,30 +78,19 @@ class UserService:
         db.session.commit()
         
         return {"message": "Usuário verificado com sucesso"}, 200
-    
 
     @staticmethod
     def login_user(email, password):
         user = User.query.filter_by(email=email).first()
 
         if not user:
-            return {"erro": "Usuário não encontrado", "status": 404}
+            return {"erro": "Usuário não encontrado"}, 404
         
         if user.password != password:
-            return {"erro": "Senha inválida", "status": 401}
+            return {"erro": "Senha inválida"}, 401
         
         if user.status != 'ativo':
-            return {"erro": "Conta não ativada", "status": 403}
+            return {"erro": "Conta não ativada"}, 403
         
-        token = jwt.encode({
-            "id": user.id,
-            "exp": datetime.now(timezone.utc) + timedelta(hours=2)
-            }, UserService.SECRET_KEY, algorithm="HS256")
-        
-        if isinstance(token, bytes):
-            token = token.decode("utf-8")
-
-        return {
-            "message": "Login realizado com sucesso",
-            "token": token
-        }
+        access_token = create_access_token(identity=user.id)
+        return {"access_token": access_token}, 200

@@ -1,7 +1,9 @@
 from flask import request, jsonify, make_response
 from src.Application.Service.user_service import UserService
+from flask_jwt_extended import get_jwt_identity
 
 class UserController:
+
     @staticmethod
     def register_user():
         data = request.get_json()
@@ -13,7 +15,7 @@ class UserController:
         status = "inativo"
 
         if not name or not email or not password or not cnpj or not celular:
-            return make_response(jsonify({"erro": "Missing required fields"}), 400)
+            return make_response(jsonify({"erro": "Campos obrigatórios"}), 400)
 
         user = UserService.create_user(name, email, password, cnpj, celular, status)
         return make_response(jsonify({
@@ -22,21 +24,21 @@ class UserController:
         }), 200)
     
     @staticmethod
-    def atualizar_usuario():
+    def update_user():
         data = request.get_json()
+        user_id = get_jwt_identity()
 
-        response, status = UserService.atualizar_usuario(data)
+        response, status = UserService.update_user(data, user_id)
 
         return jsonify(response), status
     
-    
     @staticmethod
-    def delete_user_by_email(email):
-        try:
-            UserService.delete_user_by_email(email)
-            return {"message": f"Usuário {email} desativado com sucesso"}, 200
-        except Exception as e:
-            return {"error": str(e)}, 400
+    def delete_user():
+        user_id = get_jwt_identity()
+        
+        response, status = UserService.delete_user(user_id)
+
+        return jsonify(response), status
         
     @staticmethod
     def verify_token():
@@ -48,16 +50,15 @@ class UserController:
         return jsonify(result), status_code
     
     @staticmethod
-    def login():
+    def login_user():
         data = request.json
 
         email = data.get('email')
         password = data.get('password')
 
         if not email or not password:
-            return {"erro": "E-mail e senha são obrigatórios"}, 400
+            return jsonify({"erro": "E-mail e senha são obrigatórios"}), 400
 
-        result = UserService.login_user(email, password)
+        body, status = UserService.login_user(email, password)
 
-        status = result.pop("status", 200)
-        return jsonify(result), status
+        return jsonify(body), status
