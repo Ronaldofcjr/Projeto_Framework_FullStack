@@ -20,13 +20,13 @@ def init_routes(app):
     def verify_token():
         return UserController.verify_token()
     
-    @jwt_required
     @app.route('/user', methods=['PUT'])
+    @jwt_required()
     def update_user():
         return UserController.update_user()
     
-    @jwt_required
     @app.route("/user", methods=["DELETE"])
+    @jwt_required()
     def delete_user():
         return UserController.delete_user()
     

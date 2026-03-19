@@ -29,15 +29,15 @@ class UserController:
     @staticmethod
     def update_user():
         data = request.get_json()
-        user_id = get_jwt_identity()
-
+        user_id = int(get_jwt_identity())
+        
         response, status = UserService.update_user(data, user_id)
 
         return jsonify(response), status
     
     @staticmethod
     def delete_user():
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         
         response, status = UserService.delete_user(user_id)
 

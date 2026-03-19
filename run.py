@@ -9,9 +9,10 @@ def create_app():
     """
     Função que cria e configura a aplicação Flask.
     """
-    app = Flask(__name__)
-
+    
     load_dotenv()
+    
+    app = Flask(__name__)
 
     # Configuração JWT
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")

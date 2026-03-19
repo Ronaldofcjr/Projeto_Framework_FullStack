@@ -125,7 +125,7 @@ class UserService:
         if user.status != 'ativo':
             return {"erro": "Conta não ativada"}, 403
         
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         return {
             "message": "Usuário logado com sucesso",
             "access_token": access_token}, 200
