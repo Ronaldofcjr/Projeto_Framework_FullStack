@@ -17,11 +17,14 @@ class UserController:
         if not name or not email or not password or not cnpj or not celular:
             return make_response(jsonify({"erro": "Campos obrigatórios"}), 400)
 
-        user = UserService.create_user(name, email, password, cnpj, celular, status)
-        return make_response(jsonify({
-            "mensagem": "User salvo com sucesso",
-            "usuarios": user.to_dict()
-        }), 201)
+        try:
+            user = UserService.create_user(name, email, password, cnpj, celular, status)
+            return make_response(jsonify({
+                "mensagem": "User salvo com sucesso",
+                "usuarios": user.to_dict()
+            }), 201)
+        except ValueError as e:
+            return make_response(jsonify({"erro": str(e)}), 400)
     
     @staticmethod
     def update_user():
@@ -43,10 +46,10 @@ class UserController:
     @staticmethod
     def verify_token():
         data = request.get_json()
-        celular = data.get('celular')
+        email = data.get('email')
         token = data.get('token') 
 
-        result, status_code = UserService.verify_token(celular, token)
+        result, status_code = UserService.verify_token(email, token)
         return jsonify(result), status_code
     
     @staticmethod

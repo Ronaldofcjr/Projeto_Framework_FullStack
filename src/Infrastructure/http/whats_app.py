@@ -1,14 +1,14 @@
 from twilio.rest import Client
 from src.Application.Service.user_service import UserService
-
+import os
 
 class WhatsAppService:
 
     @staticmethod
     def enviar_codigo(numero, token):
         
-        account_sid = 'SUA_ACCOUNT_SID'
-        auth_token = 'SUA_AUTH_TOKEN'
+        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
 
         cliente = Client(account_sid, auth_token)
 
