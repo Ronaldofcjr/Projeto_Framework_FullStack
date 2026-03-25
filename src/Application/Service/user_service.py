@@ -82,10 +82,10 @@ class UserService:
         if not user:
             return {"erro": "Usuário não encontrado"}, 404
 
-        if user.status == "inativo":
+        if user.status == "Inativo":
             return {"erro": "Usuário já está inativo"}, 400
 
-        user.status = "inativo"
+        user.status = "Inativo"
         db.session.commit()
 
         return {"message": "Usuário desativado com sucesso"}, 200
@@ -97,7 +97,7 @@ class UserService:
         if not user:
             return {"erro": "Token inválido ou e-mail não encontrado"}, 400
         
-        user.status = "ativo"
+        user.status = "Ativo"
         user.token = None
         
         db.session.commit()
@@ -114,7 +114,7 @@ class UserService:
         if not check_password_hash(user.password, password):
             return {"erro": "Senha inválida"}, 401
         
-        if user.status != 'ativo':
+        if user.status != 'Ativo':
             return {"erro": "Conta não ativada"}, 403
         
         access_token = create_access_token(identity=str(user.id))

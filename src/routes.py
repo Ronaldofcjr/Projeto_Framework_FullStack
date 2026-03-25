@@ -44,7 +44,7 @@ def init_routes(app):
     
     @app.route('/product/<int:id>', methods=['GET'])
     @jwt_required()
-    def list_product():
+    def list_product(id):
         return ProdutoController.list_product()
     
     @app.route('/product', methods=['PUT'])

@@ -11,7 +11,7 @@ class UserController:
         email = data.get('email')
         celular = data.get('celular')
         password = data.get('password')
-        status = "inativo"
+        status = "Inativo"
 
         if not name or not email or not password or not cnpj or not celular:
             return make_response(jsonify({"erro": "Campos obrigatórios"}), 400)
