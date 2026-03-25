@@ -1,21 +1,13 @@
 from src.Domain.user import UserDomain
 from src.Infrastructure.Model.user import User
 from src.config.data_base import db 
-import random
+from src.Infrastructure.http.whats_app import WhatsAppService
 from flask_jwt_extended import create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class UserService:
-
-    @staticmethod
-    def gerar_token():
-        token = random.randint(1000, 9999)
-        return token
-
     @staticmethod
     def create_user(name, email, password, cnpj, celular, status):
-        from src.Infrastructure.http.whats_app import WhatsAppService
-
         if User.query.filter_by(celular=celular).first():
             raise ValueError("Celular já cadastrado")
         if User.query.filter_by(email=email).first():
@@ -25,7 +17,7 @@ class UserService:
 
         hashed_password = generate_password_hash(password)
 
-        gerar_token_usuario = UserService.gerar_token()
+        gerar_token_usuario = WhatsAppService.gerar_token()
 
         user = User(
             name=name,

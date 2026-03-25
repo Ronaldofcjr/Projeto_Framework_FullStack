@@ -3,7 +3,6 @@ from src.Application.Service.user_service import UserService
 from flask_jwt_extended import get_jwt_identity
 
 class UserController:
-
     @staticmethod
     def register_user():
         data = request.get_json()

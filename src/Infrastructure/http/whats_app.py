@@ -1,8 +1,12 @@
 from twilio.rest import Client
-from src.Application.Service.user_service import UserService
 import os
+import random
 
 class WhatsAppService:
+    @staticmethod
+    def gerar_token():
+        token = random.randint(1000, 9999)
+        return token
 
     @staticmethod
     def enviar_codigo(numero, token):
