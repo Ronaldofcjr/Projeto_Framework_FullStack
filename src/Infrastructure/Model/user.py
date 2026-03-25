@@ -10,6 +10,8 @@ class User(db.Model):
     status = db.Column(db.String(20), nullable=False)
     token = db.Column(db.String(10))
 
+    produtos = db.relationship('Produto', back_populates='user')
+
     def to_dict(self):
         return {
             "id": self.id,
