@@ -34,9 +34,41 @@ class ProdutoService:
         pass
 
     @staticmethod
-    def update_product():
-        pass
-    
+    def update_product(data, id, user_id):
+        produto = Produto.query.filter_by(id=id, user_id=user_id).first()
+        
+        if not produto:
+            raise ValueError("Produto não encontrado")
+
+        name = data.get('name')
+        preco = data.get('preco')
+        quantidade = data.get('quantidade')
+        status = data.get('status')
+        img = data.get('img')
+
+        if name is not None:
+            produto.name = name
+
+        if preco is not None:
+            if preco < 0:
+                raise ValueError("Preço não pode ser negativo")
+            produto.preco = preco
+
+        if quantidade is not None:
+            if quantidade < 0:
+                raise ValueError("Quantidade não pode ser negativa")
+            produto.quantidade = quantidade
+
+        if status is not None:
+            produto.status = status
+
+        if img is not None:
+            produto.img = img
+
+        db.session.commit()
+
+        return {"mensagem": "Produto atualizado com sucesso"}
+
     @staticmethod
-    def inactivate_product():
+    def inactivate_product(id):
         pass

@@ -38,86 +38,89 @@ class UserService:
     
     @staticmethod
     def update_user(data, user_id):
+        user = User.query.get(user_id)
+
+        if not user:
+            raise ValueError("Usuário não encontrado")
+
         name = data.get('name')
         password = data.get('password')
         cnpj = data.get('cnpj')
         celular = data.get('celular')
         email = data.get('email')
 
-        user = User.query.get(user_id)
-
-        if not user:
-            return {"erro": "Usuário não encontrado"}, 404
-
         if celular and User.query.filter(User.celular == celular, User.id != user_id).first():
-            return {"erro": "Celular já cadastrado"}, 400
-        if email and User.query.filter(User.email == email, User.id != user_id).first():
-            return {"erro": "Email já cadastrado"}, 400
-        if cnpj and User.query.filter(User.cnpj == cnpj, User.id != user_id).first():
-            return {"erro": "CNPJ já cadastrado"}, 400
+            raise ValueError("Celular já cadastrado")
 
-        if name:
+        if email and User.query.filter(User.email == email, User.id != user_id).first():
+            raise ValueError("Email já cadastrado")
+
+        if cnpj and User.query.filter(User.cnpj == cnpj, User.id != user_id).first():
+            raise ValueError("CNPJ já cadastrado")
+
+        if name is not None:
             user.name = name
 
-        if password:
+        if password is not None:
             user.password = generate_password_hash(password)
 
-        if cnpj:
+        if cnpj is not None:
             user.cnpj = cnpj
 
-        if celular:
+        if celular is not None:
             user.celular = celular
 
-        if email:
+        if email is not None:
             user.email = email
 
         db.session.commit()
 
-        return {"message": "Usuário atualizado com sucesso"}, 200
+        return {"mensagem": "Usuário atualizado com sucesso"}
     
     @staticmethod
     def delete_user(user_id):
         user = User.query.get(user_id)
 
         if not user:
-            return {"erro": "Usuário não encontrado"}, 404
+            raise ValueError("Usuário não encontrado")
 
         if user.status == "Inativo":
-            return {"erro": "Usuário já está inativo"}, 400
+            raise ValueError("Usuário já está inativo")
 
         user.status = "Inativo"
         db.session.commit()
 
-        return {"message": "Usuário desativado com sucesso"}, 200
+        return {"mensagem": "Usuário desativado com sucesso"}
     
     @staticmethod
     def verify_token(email, token):
         user = User.query.filter_by(email=email, token=token).first()
         
         if not user:
-            return {"erro": "Token inválido ou e-mail não encontrado"}, 400
+            raise ValueError("Token inválido ou e-mail não encontrado")
         
         user.status = "Ativo"
         user.token = None
         
         db.session.commit()
         
-        return {"message": "Usuário verificado com sucesso"}, 200
+        return {"mensagem": "Usuário verificado com sucesso"}
 
     @staticmethod
     def login_user(email, password):
         user = User.query.filter_by(email=email).first()
 
         if not user:
-            return {"erro": "Usuário não encontrado"}, 404
+            raise ValueError("Usuário não encontrado")
         
         if not check_password_hash(user.password, password):
-            return {"erro": "Senha inválida"}, 401
+            raise ValueError("Senha inválida")
         
         if user.status != 'Ativo':
-            return {"erro": "Conta não ativada"}, 403
+            raise ValueError("Conta não ativada")
         
         access_token = create_access_token(identity=str(user.id))
         return {
-            "message": "Usuário logado com sucesso",
-            "access_token": access_token}, 200
+            "mensagem": "Usuário logado com sucesso",
+            "access_token": access_token
+        }

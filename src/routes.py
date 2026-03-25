@@ -45,14 +45,14 @@ def init_routes(app):
     @app.route('/product/<int:id>', methods=['GET'])
     @jwt_required()
     def list_product(id):
-        return ProdutoController.list_product()
+        return ProdutoController.list_product(id)
     
-    @app.route('/product', methods=['PUT'])
+    @app.route('/product/<int:id>', methods=['PUT'])
     @jwt_required()
-    def update_product():
-        return ProdutoController.update_product()
+    def update_product(id):
+        return ProdutoController.update_product(id)
     
-    @app.route('/product', methods=['PATCH'])
+    @app.route('/product/<int:id>', methods=['PATCH'])
     @jwt_required()
-    def inactivate_product():
-        return ProdutoController.inactivate_product()
+    def inactivate_product(id):
+        return ProdutoController.inactivate_product(id)

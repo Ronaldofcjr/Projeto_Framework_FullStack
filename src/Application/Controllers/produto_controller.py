@@ -21,8 +21,9 @@ class ProdutoController:
             produto = ProdutoService.create_product(name, preco, quantidade, status, img, user_id)
             return make_response(jsonify({
                 "mensagem": "Produto salvo com sucesso",
-                "produtos": produto.to_dict()
+                "produto": produto.to_dict()
             }), 201)
+
         except ValueError as e:
             return make_response(jsonify({"erro": str(e)}), 400)
 
@@ -35,9 +36,22 @@ class ProdutoController:
         pass
     
     @staticmethod
-    def update_product():
-        pass
+    def update_product(id):
+        data = request.get_json()
+        user_id = int(get_jwt_identity())
+
+        try:
+            response = ProdutoService.update_product(data, id, user_id)
+            return jsonify(response), 200
+
+        except ValueError as e:
+            mensagem = str(e)
+
+            if "não encontrado" in mensagem:
+                return jsonify({"erro": mensagem}), 404
+            else:
+                return jsonify({"erro": mensagem}), 400
     
     @staticmethod
-    def inactivate_product():
+    def inactivate_product(id):
         pass
