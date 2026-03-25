@@ -95,7 +95,7 @@ class ProdutoService:
 
         db.session.commit()
 
-        return {"mensagem": "Produto atualizado com sucesso"}
+        return ProdutoDomain(produto.id, produto.name, produto.preco, produto.quantidade, produto.status, produto.img, produto.user_id)
 
     @staticmethod
     def inactivate_product(id):

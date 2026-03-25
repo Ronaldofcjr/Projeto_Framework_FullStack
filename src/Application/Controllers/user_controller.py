@@ -33,8 +33,11 @@ class UserController:
         user_id = int(get_jwt_identity())
         
         try:
-            response = UserService.update_user(data, user_id)
-            return jsonify(response), 200
+            user = UserService.update_user(data, user_id)
+            return jsonify({
+                "mensagem": "Usuário atualizado com sucesso",
+                "usuário": user.to_dict()
+            }), 200
 
         except NotFoundError as e:
             return jsonify({"erro": str(e)}), 404
@@ -47,8 +50,11 @@ class UserController:
         user_id = int(get_jwt_identity())
         
         try:
-            response = UserService.delete_user(user_id)
-            return jsonify(response), 200
+            user = UserService.delete_user(user_id)
+            return jsonify({
+                "mensagem": "Usuário desativado com sucesso",
+                "usuário": user.to_dict()
+            }), 200
 
         except NotFoundError as e:
             return jsonify({"erro": str(e)}), 404

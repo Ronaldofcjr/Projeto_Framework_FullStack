@@ -35,7 +35,7 @@ class UserService:
         WhatsAppService.enviar_codigo(celular, gerar_token_usuario)
 
         return UserDomain(user.id, user.name, user.email, user.cnpj, user.celular, user.status)
-    
+
     @staticmethod
     def update_user(data, user_id):
         user = User.query.get(user_id)
@@ -75,8 +75,8 @@ class UserService:
 
         db.session.commit()
 
-        return {"mensagem": "Usuário atualizado com sucesso"}
-    
+        return UserDomain(user.id, user.name, user.email, user.cnpj, user.celular, user.status)
+
     @staticmethod
     def delete_user(user_id):
         user = User.query.get(user_id)
@@ -90,8 +90,8 @@ class UserService:
         user.status = "Inativo"
         db.session.commit()
 
-        return {"mensagem": "Usuário desativado com sucesso"}
-    
+        return UserDomain(user.id, user.name, user.email, user.cnpj, user.celular, user.status)
+
     @staticmethod
     def verify_token(email, token):
         user = User.query.filter_by(email=email, token=token).first()

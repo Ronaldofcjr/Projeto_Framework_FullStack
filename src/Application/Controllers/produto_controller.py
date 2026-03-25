@@ -42,8 +42,11 @@ class ProdutoController:
         user_id = int(get_jwt_identity())
 
         try:
-            response = ProdutoService.update_product(data, id, user_id)
-            return jsonify(response), 200
+            produto = ProdutoService.update_product(data, id, user_id)
+            return jsonify({
+                "mensagem": "Produto atualizado com sucesso",
+                "produto": produto.to_dict()
+            }), 200
 
         except NotFoundError as e:
             return jsonify({"erro": str(e)}), 404
