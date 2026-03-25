@@ -1,6 +1,7 @@
 from flask import request, jsonify, make_response
 from src.Application.Service.produto_service import ProdutoService
 from flask_jwt_extended import get_jwt_identity
+from src.Domain.exceptions import NotFoundError, ValidationError
 
 class ProdutoController:
     @staticmethod
@@ -24,7 +25,7 @@ class ProdutoController:
                 "produto": produto.to_dict()
             }), 201)
 
-        except ValueError as e:
+        except ValidationError as e:
             return make_response(jsonify({"erro": str(e)}), 400)
 
     @staticmethod
@@ -44,13 +45,11 @@ class ProdutoController:
             response = ProdutoService.update_product(data, id, user_id)
             return jsonify(response), 200
 
-        except ValueError as e:
-            mensagem = str(e)
+        except NotFoundError as e:
+            return jsonify({"erro": str(e)}), 404
 
-            if "não encontrado" in mensagem:
-                return jsonify({"erro": mensagem}), 404
-            else:
-                return jsonify({"erro": mensagem}), 400
+        except ValidationError as e:
+            return jsonify({"erro": str(e)}), 400
     
     @staticmethod
     def inactivate_product(id):

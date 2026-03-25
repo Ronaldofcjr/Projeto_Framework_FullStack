@@ -1,6 +1,7 @@
 from src.Domain.produto import ProdutoDomain
 from src.Infrastructure.Model.produto import Produto
 from src.config.data_base import db 
+from src.Domain.exceptions import NotFoundError, ValidationError
 
 class ProdutoService:
     @staticmethod
@@ -8,21 +9,21 @@ class ProdutoService:
         try:
             preco = float(preco)
         except (TypeError, ValueError):
-            raise ValueError("Preço inválido")
+            raise ValidationError("Preço inválido")
 
         try:
             quantidade = int(quantidade)
         except (TypeError, ValueError):
-            raise ValueError("Quantidade inválida")
+            raise ValidationError("Quantidade inválida")
 
         if preco < 0:
-            raise ValueError("Preço não pode ser negativo")
+            raise ValidationError("Preço não pode ser negativo")
 
         if quantidade < 0:
-            raise ValueError("Quantidade não pode ser negativa")
+            raise ValidationError("Quantidade não pode ser negativa")
         
         if status not in ["Ativo", "Inativo"]:
-            raise ValueError("Status inválido")
+            raise ValidationError("Status inválido")
 
         produto = Produto(
             name=name,
@@ -51,7 +52,7 @@ class ProdutoService:
         produto = Produto.query.filter_by(id=id, user_id=user_id).first()
         
         if not produto:
-            raise ValueError("Produto não encontrado")
+            raise NotFoundError("Produto não encontrado")
 
         name = data.get('name')
         preco = data.get('preco')
@@ -66,10 +67,10 @@ class ProdutoService:
             try:
                 preco = float(preco)
             except (TypeError, ValueError):
-                raise ValueError("Preço inválido")
+                raise ValidationError("Preço inválido")
 
             if preco < 0:
-                raise ValueError("Preço não pode ser negativo")
+                raise ValidationError("Preço não pode ser negativo")
 
             produto.preco = preco
 
@@ -77,16 +78,16 @@ class ProdutoService:
             try:
                 quantidade = int(quantidade)
             except (TypeError, ValueError):
-                raise ValueError("Quantidade inválida")
+                raise ValidationError("Quantidade inválida")
 
             if quantidade < 0:
-                raise ValueError("Quantidade não pode ser negativa")
+                raise ValidationError("Quantidade não pode ser negativa")
 
             produto.quantidade = quantidade
 
         if status is not None:
             if status not in ["Ativo", "Inativo"]:
-                raise ValueError("Status inválido")
+                raise ValidationError("Status inválido")
             produto.status = status
 
         if img is not None:

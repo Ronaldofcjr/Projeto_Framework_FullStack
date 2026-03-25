@@ -1,6 +1,7 @@
 from flask import request, jsonify, make_response
 from src.Application.Service.user_service import UserService
 from flask_jwt_extended import get_jwt_identity
+from src.Domain.exceptions import (NotFoundError, ValidationError, UnauthorizedError, ForbiddenError)
 
 class UserController:
     @staticmethod
@@ -23,7 +24,7 @@ class UserController:
                 "usuário": user.to_dict()
             }), 201)
 
-        except ValueError as e:
+        except ValidationError as e:
             return make_response(jsonify({"erro": str(e)}), 400)
     
     @staticmethod
@@ -35,13 +36,11 @@ class UserController:
             response = UserService.update_user(data, user_id)
             return jsonify(response), 200
 
-        except ValueError as e:
-            mensagem = str(e)
+        except NotFoundError as e:
+            return jsonify({"erro": str(e)}), 404
 
-            if "não encontrado" in mensagem:
-                return jsonify({"erro": mensagem}), 404
-            else:
-                return jsonify({"erro": mensagem}), 400
+        except ValidationError as e:
+            return jsonify({"erro": str(e)}), 400
     
     @staticmethod
     def delete_user():
@@ -51,13 +50,11 @@ class UserController:
             response = UserService.delete_user(user_id)
             return jsonify(response), 200
 
-        except ValueError as e:
-            mensagem = str(e)
+        except NotFoundError as e:
+            return jsonify({"erro": str(e)}), 404
 
-            if "não encontrado" in mensagem:
-                return jsonify({"erro": mensagem}), 404
-            else:
-                return jsonify({"erro": mensagem}), 400
+        except ValidationError as e:
+            return jsonify({"erro": str(e)}), 400
         
     @staticmethod
     def verify_token():
@@ -69,7 +66,7 @@ class UserController:
             result = UserService.verify_token(email, token)
             return jsonify(result), 200
 
-        except ValueError as e:
+        except ValidationError as e:
             return make_response(jsonify({"erro": str(e)}), 400)
     
     @staticmethod
@@ -86,14 +83,14 @@ class UserController:
             body = UserService.login_user(email, password)
             return jsonify(body), 200
 
-        except ValueError as e:
-            mensagem = str(e)
+        except NotFoundError as e:
+            return jsonify({"erro": str(e)}), 404
 
-            if "não encontrado" in mensagem:
-                return jsonify({"erro": mensagem}), 404
-            elif "Senha inválida" in mensagem:
-                return jsonify({"erro": mensagem}), 401
-            elif "Conta não ativada" in mensagem:
-                return jsonify({"erro": mensagem}), 403
-            else:
-                return jsonify({"erro": mensagem}), 400
+        except UnauthorizedError as e:
+            return jsonify({"erro": str(e)}), 401
+
+        except ForbiddenError as e:
+            return jsonify({"erro": str(e)}), 403
+
+        except ValidationError as e:
+            return jsonify({"erro": str(e)}), 400

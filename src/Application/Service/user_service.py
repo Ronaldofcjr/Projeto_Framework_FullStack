@@ -4,19 +4,19 @@ from src.config.data_base import db
 from src.Infrastructure.http.whats_app import WhatsAppService
 from flask_jwt_extended import create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
+from src.Domain.exceptions import (NotFoundError, ValidationError, UnauthorizedError, ForbiddenError)
 
 class UserService:
     @staticmethod
     def create_user(name, email, password, cnpj, celular, status):
         if User.query.filter_by(celular=celular).first():
-            raise ValueError("Celular já cadastrado")
+            raise ValidationError("Celular já cadastrado")
         if User.query.filter_by(email=email).first():
-            raise ValueError("Email já cadastrado")
+            raise ValidationError("Email já cadastrado")
         if User.query.filter_by(cnpj=cnpj).first():
-            raise ValueError("CNPJ já cadastrado")
+            raise ValidationError("CNPJ já cadastrado")
 
         hashed_password = generate_password_hash(password)
-
         gerar_token_usuario = WhatsAppService.gerar_token()
 
         user = User(
@@ -41,7 +41,7 @@ class UserService:
         user = User.query.get(user_id)
 
         if not user:
-            raise ValueError("Usuário não encontrado")
+            raise NotFoundError("Usuário não encontrado")
 
         name = data.get('name')
         password = data.get('password')
@@ -50,13 +50,13 @@ class UserService:
         email = data.get('email')
 
         if celular and User.query.filter(User.celular == celular, User.id != user_id).first():
-            raise ValueError("Celular já cadastrado")
+            raise ValidationError("Celular já cadastrado")
 
         if email and User.query.filter(User.email == email, User.id != user_id).first():
-            raise ValueError("Email já cadastrado")
+            raise ValidationError("Email já cadastrado")
 
         if cnpj and User.query.filter(User.cnpj == cnpj, User.id != user_id).first():
-            raise ValueError("CNPJ já cadastrado")
+            raise ValidationError("CNPJ já cadastrado")
 
         if name is not None:
             user.name = name
@@ -82,10 +82,10 @@ class UserService:
         user = User.query.get(user_id)
 
         if not user:
-            raise ValueError("Usuário não encontrado")
+            raise NotFoundError("Usuário não encontrado")
 
         if user.status == "Inativo":
-            raise ValueError("Usuário já está inativo")
+            raise ValidationError("Usuário já está inativo")
 
         user.status = "Inativo"
         db.session.commit()
@@ -97,7 +97,7 @@ class UserService:
         user = User.query.filter_by(email=email, token=token).first()
         
         if not user:
-            raise ValueError("Token inválido ou e-mail não encontrado")
+            raise ValidationError("Token inválido ou e-mail não encontrado")
         
         user.status = "Ativo"
         user.token = None
@@ -111,13 +111,13 @@ class UserService:
         user = User.query.filter_by(email=email).first()
 
         if not user:
-            raise ValueError("Usuário não encontrado")
+            raise NotFoundError("Usuário não encontrado")
         
         if not check_password_hash(user.password, password):
-            raise ValueError("Senha inválida")
+            raise UnauthorizedError("Senha inválida")
         
         if user.status != 'Ativo':
-            raise ValueError("Conta não ativada")
+            raise ForbiddenError("Conta não ativada")
         
         access_token = create_access_token(identity=str(user.id))
         return {
