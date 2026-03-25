@@ -5,11 +5,24 @@ from src.config.data_base import db
 class ProdutoService:
     @staticmethod
     def create_product(name, preco, quantidade, status, img, user_id):
+        try:
+            preco = float(preco)
+        except (TypeError, ValueError):
+            raise ValueError("Preço inválido")
+
+        try:
+            quantidade = int(quantidade)
+        except (TypeError, ValueError):
+            raise ValueError("Quantidade inválida")
+
         if preco < 0:
             raise ValueError("Preço não pode ser negativo")
 
         if quantidade < 0:
             raise ValueError("Quantidade não pode ser negativa")
+        
+        if status not in ["Ativo", "Inativo"]:
+            raise ValueError("Status inválido")
 
         produto = Produto(
             name=name,
@@ -50,16 +63,30 @@ class ProdutoService:
             produto.name = name
 
         if preco is not None:
+            try:
+                preco = float(preco)
+            except (TypeError, ValueError):
+                raise ValueError("Preço inválido")
+
             if preco < 0:
                 raise ValueError("Preço não pode ser negativo")
+
             produto.preco = preco
 
         if quantidade is not None:
+            try:
+                quantidade = int(quantidade)
+            except (TypeError, ValueError):
+                raise ValueError("Quantidade inválida")
+
             if quantidade < 0:
                 raise ValueError("Quantidade não pode ser negativa")
+
             produto.quantidade = quantidade
 
         if status is not None:
+            if status not in ["Ativo", "Inativo"]:
+                raise ValueError("Status inválido")
             produto.status = status
 
         if img is not None:
