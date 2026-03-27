@@ -40,12 +40,22 @@ class ProdutoService:
         return ProdutoDomain(produto.id, produto.name, produto.preco, produto.quantidade, produto.status, produto.img, produto.user_id)
 
     @staticmethod
-    def list_products():
-        pass
+    def list_products(user_id):
+        produtos = Produto.query.filter_by(user_id=user_id).all()
+
+        return [
+            ProdutoDomain(produto.id, produto.name, produto.preco, produto.quantidade, produto.status, produto.img, produto.user_id)
+            for produto in produtos       
+        ]
 
     @staticmethod
-    def list_product(id):
-        pass
+    def list_product(id, user_id):
+        produto = Produto.query.filter_by(id=id, user_id=user_id).first()
+
+        if not produto:
+            raise NotFoundError("Produto não encontrado")
+
+        return ProdutoDomain(produto.id, produto.name, produto.preco, produto.quantidade, produto.status, produto.img, produto.user_id)
 
     @staticmethod
     def update_product(data, id, user_id):
@@ -98,5 +108,16 @@ class ProdutoService:
         return ProdutoDomain(produto.id, produto.name, produto.preco, produto.quantidade, produto.status, produto.img, produto.user_id)
 
     @staticmethod
-    def inactivate_product(id):
-        pass
+    def inactivate_product(id, user_id):
+        produto = Produto.query.filter_by(id=id, user_id=user_id).first()
+
+        if not produto:
+            raise NotFoundError("Produto não encontrado")
+        
+        if produto.status == "Inativo":
+            raise ValidationError("Produto já está inativo")
+        
+        produto.status = "Inativo"
+        db.session.commit()
+
+        return ProdutoDomain(produto.id, produto.name, produto.preco, produto.quantidade, produto.status, produto.img, produto.user_id)

@@ -26,6 +26,9 @@ class UserController:
 
         except ValidationError as e:
             return make_response(jsonify({"erro": str(e)}), 400)
+        
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500
     
     @staticmethod
     def update_user():
@@ -44,6 +47,9 @@ class UserController:
 
         except ValidationError as e:
             return jsonify({"erro": str(e)}), 400
+        
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500
     
     @staticmethod
     def delete_user():
@@ -62,6 +68,9 @@ class UserController:
         except ValidationError as e:
             return jsonify({"erro": str(e)}), 400
         
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500
+        
     @staticmethod
     def verify_token():
         data = request.get_json()
@@ -74,6 +83,9 @@ class UserController:
 
         except ValidationError as e:
             return make_response(jsonify({"erro": str(e)}), 400)
+        
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500
     
     @staticmethod
     def login_user():
@@ -100,3 +112,6 @@ class UserController:
 
         except ValidationError as e:
             return jsonify({"erro": str(e)}), 400
+        
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500

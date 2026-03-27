@@ -27,15 +27,45 @@ class ProdutoController:
 
         except ValidationError as e:
             return make_response(jsonify({"erro": str(e)}), 400)
+        
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500
 
     @staticmethod
     def list_products():
-        pass
+        user_id = int(get_jwt_identity())
+
+        try:
+            produtos = ProdutoService.list_products(user_id)
+            return jsonify({
+                "produtos": [produto.to_dict() for produto in produtos]
+            }), 200
+        
+        except ValidationError as e:
+            return jsonify({"erro": str(e)}), 400
+        
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500
 
     @staticmethod
     def list_product(id):
-        pass
-    
+        user_id = int(get_jwt_identity())
+
+        try:
+            produto = ProdutoService.list_product(id, user_id)
+            return jsonify({
+                "produto": produto.to_dict()
+            }), 200
+        
+        except NotFoundError as e:
+            return jsonify({"erro": str(e)}), 404
+
+        except ValidationError as e:
+            return jsonify({"erro": str(e)}), 400
+        
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500
+
     @staticmethod
     def update_product(id):
         data = request.get_json()
@@ -53,7 +83,27 @@ class ProdutoController:
 
         except ValidationError as e:
             return jsonify({"erro": str(e)}), 400
-    
+        
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500
+
     @staticmethod
     def inactivate_product(id):
-        pass
+        user_id = int(get_jwt_identity())
+
+        try:
+            produto = ProdutoService.inactivate_product(id, user_id)
+
+            return jsonify({
+                "mensagem": "Produto desativado com sucesso",
+                "produto": produto.to_dict()
+            }), 200
+        
+        except NotFoundError as e:
+            return jsonify({"erro": str(e)}), 404
+
+        except ValidationError as e:
+            return jsonify({"erro": str(e)}), 400
+        
+        except Exception as e:
+            return jsonify({"erro": "Erro interno"}), 500
