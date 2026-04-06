@@ -4,6 +4,7 @@ from src.Application.Service.vendas_service import VendasService
 from src.Domain.exceptions import NotFoundError, ValidationError
 
 class VendasController:
+
     @staticmethod
     def create_venda():
         user_id = int(get_jwt_identity())
@@ -11,13 +12,13 @@ class VendasController:
         data = request.get_json()
         produto_id = data.get('produto_id')
         quantidade = data.get('quantidade')
-        preco_unitario = data.get('preco_unitario')
 
-        if produto_id is None or quantidade is None or preco_unitario is None:
+        if produto_id is None or quantidade is None:
             return make_response(jsonify({"erro": "Campos obrigatórios"}), 400)
 
         try:
-            venda = VendasService.create_venda(produto_id, quantidade, preco_unitario)
+            venda = VendasService.create_venda(produto_id, quantidade, user_id)
+
             return make_response(jsonify({
                 "mensagem": "Venda realizada com sucesso",
                 "venda": venda.to_dict()
@@ -30,4 +31,5 @@ class VendasController:
             return make_response(jsonify({"erro": str(e)}), 404)
         
         except Exception as e:
+            print(f"Erro ao criar venda: {str(e)}")
             return make_response(jsonify({"erro": "Erro interno"}), 500)
