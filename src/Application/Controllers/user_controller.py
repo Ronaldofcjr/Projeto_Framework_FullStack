@@ -28,7 +28,8 @@ class UserController:
             return make_response(jsonify({"erro": str(e)}), 400)
         
         except Exception as e:
-            return jsonify({"erro": "Erro interno"}), 500
+            print("Erro interno:", str(e))
+            return{"erro": str(e)}, 500
     
     @staticmethod
     def update_user():

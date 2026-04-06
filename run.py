@@ -4,6 +4,7 @@ from src.routes import init_routes
 from dotenv import load_dotenv
 import os
 from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
 def create_app():
     """
@@ -16,6 +17,7 @@ def create_app():
 
     # Configuração JWT
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=2)
     jwt = JWTManager(app)
 
     init_db(app)
