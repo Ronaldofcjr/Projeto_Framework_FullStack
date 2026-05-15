@@ -7,6 +7,7 @@ class UserController:
     @staticmethod
     def register_user():
         data = request.get_json()
+        print("Dados recebidos:", data)
         name = data.get('name')
         cnpj = data.get('cnpj')
         email = data.get('email')

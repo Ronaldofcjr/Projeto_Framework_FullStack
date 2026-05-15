@@ -19,6 +19,13 @@ class UserService:
         hashed_password = generate_password_hash(password)
         gerar_token_usuario = WhatsAppService.gerar_token()
 
+        try:
+            WhatsAppService.enviar_codigo(celular, gerar_token_usuario)
+        except Exception as e:
+            print(f"Falha ao enviar WhatsApp: {e}")
+            raise ValidationError("Não foi possível enviar o código de verificação. Tente novamente mais tarde.")
+        
+
         user = User(
             name=name,
             email=email,
@@ -32,7 +39,6 @@ class UserService:
         db.session.add(user)
         db.session.commit()
 
-        WhatsAppService.enviar_codigo(celular, gerar_token_usuario)
 
         return UserDomain(user.id, user.name, user.email, user.cnpj, user.celular, user.status)
 
@@ -108,6 +114,8 @@ class UserService:
 
     @staticmethod
     def login_user(email, password):
+        print(f">>> Email recebido: {email}")
+        print(f">>> Senha recebida: {password}")
         user = User.query.filter_by(email=email).first()
 
         if not user:
