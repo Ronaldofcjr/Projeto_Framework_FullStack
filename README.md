@@ -1,5 +1,15 @@
 # 📦 Gestão de Estoque para Mini Mercados
 
+## 👥 Integrantes do Projeto
+
+- **Paulo Henrique Pires Cordeiro** — 2402602  
+- **Ronaldo Filgueira Cavalcante** — 2403661  
+- **Maycon Pereira Ribeiro** — 2402929  
+- **Luis Gabriel de Jesus Barbosa** — 2402947  
+- **Gustavo Meirelles Festa** — 2403079
+
+---
+
 ## 📌 Objetivo
 Desenvolver um sistema para gestão de estoque e vendas de mini mercados, garantindo segurança, controle de acesso e gestão eficiente de produtos e vendas.
 
@@ -147,5 +157,4 @@ Um seller autenticado pode:
 ## 📌 Considerações Finais
 Este projeto fornece um sistema completo para mini mercados gerenciarem seus estoques e vendas com segurança e eficiência. 🚀
 
-# Projeto_Framework_FullStack
 # Projeto_Framework_FullStack
